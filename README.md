@@ -8,6 +8,7 @@ comes from the browser's `crypto.getRandomValues` (unbiased rejection sampling, 
 **Live:** https://techshield-tech.github.io/password-generator/
 
 Part of [MMOALL Developer Tools](https://mmoall.com/tools).
+Also available at [mmoall.com/tools/password-generator](https://mmoall.com/tools/password-generator).
 
 ## Features
 
@@ -56,19 +57,17 @@ Part of [MMOALL Developer Tools](https://mmoall.com/tools).
 - [Vite 6](https://vite.dev/) + [React 19](https://react.dev/) + TypeScript
 - [Tailwind CSS 4](https://tailwindcss.com/) (via `@tailwindcss/vite`)
 - [Bun](https://bun.sh/) as package manager / script runner
-- Web Crypto API (`crypto.getRandomValues`); no runtime dependencies besides React
+- Web Crypto API (`crypto.getRandomValues`)
+- [`@mmoall/tool-kit`](https://github.com/techshield-tech/tool-kit) for the shared shell, theme, embed, and SEO code
 
 ## Project structure
 
 ```
 src/
 ├── main.tsx               # Entry point
-├── index.css              # Tailwind + theme tokens (light/dark)
+├── index.css              # Tailwind, plus theme tokens imported from @mmoall/tool-kit
 ├── tool.config.ts         # Tool metadata: slug, name, description, category
-├── shell/                 # Shared MMOALL tool shell (same across tool repos)
-│   ├── AppShell.tsx       # Header/footer, theme handling, embed mode
-│   ├── embed.ts           # iframe embed contract (postMessage)
-│   └── ui.tsx             # UI primitives and icons
+├── vite-env.d.ts          # Vite ambient types
 └── tool/                  # Password-generator–specific code
     ├── Tool.tsx           # Tab switcher
     ├── PasswordTab.tsx    # Password / token generator UI
@@ -82,6 +81,11 @@ src/
     ├── strength.ts        # Entropy, warnings, crack-time estimation
     └── wordlists.ts       # EFF Diceware wordlists (CC BY 3.0 US)
 ```
+
+The shared MMOALL tool shell (header/footer, theme handling, embed mode, UI
+primitives, and SEO) is no longer vendored under `src/shell/` — it comes from
+the [`@mmoall/tool-kit`](https://github.com/techshield-tech/tool-kit) npm
+package instead.
 
 The EFF wordlists are © Electronic Frontier Foundation, licensed under
 [CC BY 3.0 US](https://creativecommons.org/licenses/by/3.0/us/).
@@ -118,7 +122,9 @@ With npm: `npm install`, `npm run dev`, `npm run build`, `npm run preview`.
 
 ### Base path
 
-The asset base URL is chosen at build time in `vite.config.ts`:
+The asset base URL is chosen at build time by the `mmoallTool()` preset from
+[`@mmoall/tool-kit/vite`](https://github.com/techshield-tech/tool-kit), which
+`vite.config.ts` calls with this tool's config:
 
 | Condition               | `base`             | Used for                    |
 | ----------------------- | ------------------ | --------------------------- |
